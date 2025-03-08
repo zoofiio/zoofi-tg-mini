@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+:root {
+  --background: linear-gradient(320.7deg, #3f4d1b 24.62%, #02050e 70.62%);
+  --foreground: #ffffff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-primary: #659549;
+}
+@layer components {
+  .btn-primary {
+    @apply flex gap-2 items-center justify-center flex-nowrap outline-0 w-full h-10 py-2.5 px-5 text-sm font-medium leading-1.5 text-primary bg-white/95 transition-all rounded-lg cursor-pointer select-none;
+  }
+  
+}
+
+html {
+  font-size: min(4.103vw, 32px);
+  width: 100dvw;
+  height: 100dvh;
+}
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100%;
+  overflow-y: auto;
+  max-width: 800px;
+}
