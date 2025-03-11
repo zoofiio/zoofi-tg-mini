@@ -18,6 +18,9 @@ export type TGUser = {
 const BASE_URL = isProd ? "https://api-mini.zoofi.io" : "http://localhost:4000";
 
 async function getData<T>(res: Response) {
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  }
   return res.json().then((data) => (data as RES<T>).data);
 }
 export function getTgUser(userId: number) {

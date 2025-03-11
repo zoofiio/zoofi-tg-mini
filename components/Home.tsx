@@ -2,18 +2,33 @@
 
 import { Logo } from "@/components/imgs/logo";
 import { ArrowRightTop, Telegram, TwitterX } from "@/components/imgs/social";
-import { getTgUser, reportCheck } from "@/libs/api";
-import { cn } from "@/libs/utils";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { getTgUser, reportCheck, TGUser } from "@/libs/api";
+import { cn, getTgApp } from "@/libs/utils";
+import { useMutation } from "@tanstack/react-query";
 import { Fragment, ReactNode, useRef } from "react";
+import { FaSpinner } from "react-icons/fa6";
 import { FiChevronDown, FiChevronUp, FiX } from 'react-icons/fi';
-import { useToggle } from "react-use";
+import { useEffectOnce, useToggle } from "react-use";
+import { create } from "zustand";
 import { useShallow } from "zustand/shallow";
-import { getTgApp, useInitTgApp } from "./hooks/useInitTgApp";
+
 import { Menus, useMenusStore } from "./Menus";
 import Modal from "./Modal";
-import { FaSpinner } from "react-icons/fa6";
 
+const useTgUser = create<{
+    tguser?: TGUser,
+    fetchTgUser: () => Promise<TGUser | undefined>
+}>((set) => ({
+    fetchTgUser: async () => {
+        const uid = getTgApp().initDataUnsafe.user?.id;
+        if (uid) {
+            const user = await getTgUser(uid)
+            set({ tguser: user })
+            return user
+        }
+        return undefined
+    }
+}))
 function FrameLanuch({ finished }: { finished?: boolean }) {
     const litghtText = (text: string) => {
         return <span className="text-[#2BBD34]">{text}</span>
@@ -27,6 +42,7 @@ function FrameLanuch({ finished }: { finished?: boolean }) {
                 return
             }
             await reportCheck(tgApp.initData, 'joinTgChannel')
+            await useTgUser.getState().fetchTgUser()
             toggleOpen(false)
         }
     })
@@ -50,11 +66,12 @@ function FrameLanuch({ finished }: { finished?: boolean }) {
                 !isClcikedGo && !finished && <Modal bgImage trigger={<div className="btn-primary">Go</div>} childrenClassName="h-[31.25rem]">
                     {({ toggleOpen }) => <>
                         <div className="mt-5 bg-primary rounded-sm font-semibold text-lg p-2">Join out community</div>
-                        <div className="mt-auto btn-primary" onClick={() => {
+                        <div className="mt-auto btn-primary" onClick={async () => {
                             const tgApp = getTgApp()
                             if (tgApp && tgApp.initData) {
                                 tgApp.openLink(encodeURI(`https://x.com/intent/follow?original_referer=zoofi.io&ref_src=twsrc^tfw|twcamp^buttonembed|twterm^follow|twgr^ZooFinanceIO&screen_name=ZooFinanceIO`))
-                                reportCheck(tgApp.initData, 'followX').catch(console.error)
+                                await reportCheck(tgApp.initData, 'followX').catch(console.error)
+                                await useTgUser.getState().fetchTgUser()
                             }
                         }}>
                             <TwitterX className="text-[2rem]" />
@@ -148,16 +165,9 @@ function AboutLNT() {
 
 export function Home() {
     const menu = useMenusStore(useShallow(s => s.current))
-    const state = useInitTgApp()
-    const { data } = useQuery({
-        enabled: state.inited,
-        queryKey: ['getTguser', state.inited, state.tgApp?.initData],
-        queryFn: async () => {
-            if (!state.tgApp?.initDataUnsafe?.user?.id) return undefined
-            return getTgUser(state.tgApp.initDataUnsafe.user.id)
-        }
-    })
-    const finished = Boolean(data) && Boolean(data?.profile.followX) && Boolean(data?.profile.joinTgChannel)
+    const tguser = useTgUser(useShallow(s => s.tguser))
+    useEffectOnce(() => { useTgUser.getState().fetchTgUser() })
+    const finished = Boolean(tguser) && Boolean(tguser?.profile?.followX) && Boolean(tguser?.profile?.joinTgChannel)
     return (
         <Fragment>
             {menu.txt == "Home" && <FrameLanuch finished={finished} />}
