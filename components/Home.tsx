@@ -51,7 +51,7 @@ function FrameLanuch({ finished }: { finished?: boolean }) {
         <div className="flex flex-col w-full gap-2.5 absolute top-[8.125rem] items-center">
             <Logo className="text-[4rem]" />
             <div className="font-semibold text-center">{litghtText('L')}iquid {litghtText('N')}ode {litghtText('T')}oken</div>
-            <img src={'/time.svg'} alt="time" className="w-full -mt-8" />
+            <img src={'/time.svg'} alt="time" className="w-full -mt-8 object-contain h-[67.18vh]" />
         </div>
         <img src={'/bg_rb.svg'} alt="bg right bottom" className="w-[12.1875rem] absolute bottom-0 right-0" />
         <img src={'/bg_lb.svg'} alt="bg left bottom" className="w-[22.9375rem] absolute bottom-0 left-0" />
