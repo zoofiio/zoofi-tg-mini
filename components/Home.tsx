@@ -86,7 +86,7 @@ function FrameLanuch({ finished }: { finished?: boolean }) {
                 <div className=" btn-second" onClick={() => {
                     const tgApp = getTgApp()
                     if (tgApp && tgApp.initData) {
-                        tgApp.openTelegramLink('t.me/@ZooLnt')
+                        tgApp.openTelegramLink('https://t.me/ZooLnt')
                     }
                 }}>Go</div>
                 <div className="mt-2.5 btn-primary" onClick={() => !isPendingReportCheckJoin && reportCheckJoin(toggleOpen)}>{isPendingReportCheckJoin && <FaSpinner className="animate-spin text-base" />} Check</div>
