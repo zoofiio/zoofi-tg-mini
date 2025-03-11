@@ -9,20 +9,26 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@tanstack/react-query": "^5.67.2",
+    "clsx": "^2.1.1",
     "next": "14.x",
     "postcss": "^8.5.3",
     "react": "18.x",
     "react-dom": "18.x",
+    "react-icons": "^5.5.0",
     "react-modal": "^3.16.3",
     "react-use": "^17.6.0",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4.x"
+    "tailwind-merge": "^3.0.2",
+    "tailwindcss": "^4.x",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-modal": "^3.16.3",
+    "@types/telegram-web-app": "^7.10.1",
     "typescript": "^5"
   }
 }

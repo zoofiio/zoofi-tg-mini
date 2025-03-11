@@ -16,6 +16,9 @@
   .btn-primary {
     @apply flex gap-2 items-center justify-center flex-nowrap outline-0 w-full h-10 py-2.5 px-5 text-sm font-medium leading-1.5 text-primary bg-white/95 transition-all rounded-lg cursor-pointer select-none;
   }
+  .btn-second {
+    @apply flex gap-2 items-center justify-center flex-nowrap outline-0 w-full h-10 py-2.5 px-5 text-sm font-medium leading-1.5 text-white bg-primary transition-all rounded-lg cursor-pointer select-none;
+  }
   
 }
 

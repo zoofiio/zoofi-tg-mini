@@ -1,4 +1,7 @@
 'use client'
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+
+const client = new QueryClient()
 import * as React from 'react';
 export function PageLayout({
     children,
@@ -11,9 +14,7 @@ export function PageLayout({
         console.info('inited')
         setInited(true)
     }, [])
-    if (inited) {
-        return children
-    } else {
-        return null
-    }
+    return <QueryClientProvider client={client}>
+        {inited && children}
+    </QueryClientProvider>
 }
