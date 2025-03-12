@@ -7,8 +7,9 @@ import { reFetchTGUser, useTGUser } from "./hooks/useTguser";
 import { Correct, Telegram, TwitterX, Wallet } from "./imgs/social";
 import { useMutation } from "@tanstack/react-query";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { toUserFriendlyAddress, useTonConnectUI } from "@tonconnect/ui-react";
+import { useToggle } from "react-use";
 
 export type TaskUI = {
     id: TaskID
@@ -19,7 +20,7 @@ export type TaskUI = {
     onClick: (clicked: boolean) => void
     reward?: string
     needCheck?: boolean
-    checking?: boolean
+    loading?: boolean
 }
 
 function TaskItem({ task }: { task: TaskUI }) {
@@ -32,12 +33,12 @@ function TaskItem({ task }: { task: TaskUI }) {
         </div>
         <div className={cn("shrink-0 btn-primary w-[4.8125rem]", { "!text-white !bg-primary": task.finished })} onClick={() => {
             if (task.finished) return
-            if (task.needCheck && task.checking) return
+            if (task.needCheck && task.loading) return
             task.onClick(clicked)
             setClicked(true)
         }}>
-            {task.checking && <FaSpinner className="shrink-0" />}
-            {task.finished ? 'Done' : task.needCheck && clicked ? 'Check' : task.btn}
+            {task.loading && <FaSpinner className="shrink-0" />}
+            {task.finished ? 'Done' : task.needCheck && clicked ? 'Check' : task.loading ? '' : task.btn}
             {task.finished && <Correct className="text-sm text-white shrink-0" />}
         </div>
     </div>
@@ -65,7 +66,7 @@ export function TaskJoinTGChannel() {
             joinCheckTgChannel()
         }
     }
-    return <TaskItem task={{ id: 'joinTgChannel', icon: Telegram, name: 'Join our Telegram channel', finished: Boolean(tguser?.profile?.joinTgChannel), btn: 'Join', onClick: onClickJoinTgChannel, needCheck: true, checking: isCheckingTgChannel }} />
+    return <TaskItem task={{ id: 'joinTgChannel', icon: Telegram, name: 'Join our Telegram channel', finished: Boolean(tguser?.profile?.joinTgChannel), btn: 'Join', onClick: onClickJoinTgChannel, needCheck: true, loading: isCheckingTgChannel }} />
 
 }
 export function TaskJoinTGGroup() {
@@ -81,12 +82,13 @@ export function TaskJoinTGGroup() {
             joinCheckTgGroup()
         }
     }
-    return <TaskItem task={{ id: 'joinTgChat', icon: Telegram, name: 'Follow our Telegram group', finished: Boolean(tguser?.profile?.joinTgChat), btn: 'Join', onClick: onClickJoinTgGroup, needCheck: true, checking: isCheckingTgGroup }} />
+    return <TaskItem task={{ id: 'joinTgChat', icon: Telegram, name: 'Follow our Telegram group', finished: Boolean(tguser?.profile?.joinTgChat), btn: 'Join', onClick: onClickJoinTgGroup, needCheck: true, loading: isCheckingTgGroup }} />
 }
 export function TaskConnectTon() {
     const tguser = useTGUser()
     const [tonConnectUI] = useTonConnectUI();
-    const onClickConnectTonWallet = () => {
+    const onClickConnectTonWallet = async () => {
+        await tonConnectUI.disconnect().catch(console.error)
         const unSub = tonConnectUI.onStatusChange((wallet) => {
             if (wallet && wallet.account) {
                 reportCheck(getTgApp().initData, 'connectTonAccount', { account: toUserFriendlyAddress(wallet.account.address) })
@@ -102,14 +104,15 @@ export function TaskConnectEvm() {
     const tguser = useTGUser()
     const { openConnectModal } = useConnectModal()
     const { address, isConnected } = useAccount()
+    const { disconnectAsync } = useDisconnect()
     const refDoConnectEvm = useRef(false)
-    const onClickConnectEvmWallet = () => {
+    const onClickConnectEvmWallet = async () => {
+        await disconnectAsync().catch(console.error)
         openConnectModal?.()
         refDoConnectEvm.current = true
     }
     useEffect(() => {
-        if (refDoConnectEvm.current && isConnected && address) {
-            
+        if ((refDoConnectEvm.current) && isConnected && address) {
             reportCheck(getTgApp().initData, 'connectEvmAccount', { account: address })
                 .then(reFetchTGUser)
         }

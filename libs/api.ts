@@ -42,7 +42,7 @@ export async function getTgUser(userId: number) {
 export async function reportCheck(auth: string, taskId: TaskID, body?: { account?: string }) {
   return await fetch(`${BASE_URL}/api/report/${taskId}/check`, {
     method: "POST",
-    headers: { authorization: auth, Accept: "application/json", "Content-Type": "application/json" },
+    headers: { authorization: auth, Accept: "application/json, text/plain, */*", "Content-Type": "application/json" },
     body: body ? JSON.stringify(body) : undefined,
   }).then(getData<void>);
 }
