@@ -166,7 +166,7 @@ function AboutLNT() {
 export function Home() {
     const menu = useMenusStore(useShallow(s => s.current))
     const tguser = useTgUser(useShallow(s => s.tguser))
-    useEffectOnce(() => { useTgUser.getState().fetchTgUser() })
+    useEffectOnce(() => { setTimeout(useTgUser.getState().fetchTgUser, 500) })
     const finished = Boolean(tguser) && Boolean(tguser?.profile?.followX) && Boolean(tguser?.profile?.joinTgChannel)
     return (
         <Fragment>
