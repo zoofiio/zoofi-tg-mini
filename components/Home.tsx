@@ -2,34 +2,24 @@
 
 import { Logo } from "@/components/imgs/logo";
 import { ArrowRightTop, Telegram, TwitterX } from "@/components/imgs/social";
-import { getTgUser, reportCheck, TGUser } from "@/libs/api";
+import { reportCheck } from "@/libs/api";
 import { cn, getTgApp } from "@/libs/utils";
 import { useMutation } from "@tanstack/react-query";
 import { Fragment, ReactNode, useRef } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { FiChevronDown, FiChevronUp, FiX } from 'react-icons/fi';
 import { useEffectOnce, useToggle } from "react-use";
-import { create } from "zustand";
 import { useShallow } from "zustand/shallow";
-
+import { followXLink, isLocal, TGChannelLink } from "@/libs/env";
+import { get, keys } from "lodash";
+import { reFetchTGUser, useTGUser } from "./hooks/useTguser";
 import { Menus, useMenusStore } from "./Menus";
 import Modal from "./Modal";
+import { TaskConnectEvm, TaskConnectTon, TaskFollowX, TaskJoinTGChannel, TaskJoinTGGroup } from "./Tasks";
 
-const useTgUser = create<{
-    tguser?: TGUser,
-    fetchTgUser: () => Promise<TGUser | undefined>
-}>((set) => ({
-    fetchTgUser: async () => {
-        const uid = getTgApp().initDataUnsafe.user?.id;
-        if (uid) {
-            const user = await getTgUser(uid)
-            set({ tguser: user })
-            return user
-        }
-        return undefined
-    }
-}))
-function FrameLanuch({ finished }: { finished?: boolean }) {
+function FrameLanuch() {
+    const tguser = useTGUser()
+    const finished = isLocal || (Boolean(tguser) && Boolean(tguser?.profile?.followX) && Boolean(tguser?.profile?.joinTgChannel))
     const litghtText = (text: string) => {
         return <span className="text-[#2BBD34]">{text}</span>
     }
@@ -42,7 +32,7 @@ function FrameLanuch({ finished }: { finished?: boolean }) {
                 return
             }
             await reportCheck(tgApp.initData, 'joinTgChannel')
-            await useTgUser.getState().fetchTgUser()
+            await reFetchTGUser()
             toggleOpen(false)
         }
     })
@@ -53,8 +43,8 @@ function FrameLanuch({ finished }: { finished?: boolean }) {
             <div className="font-semibold text-center">{litghtText('L')}iquid {litghtText('N')}ode {litghtText('T')}oken</div>
             <img src={'/time.svg'} alt="time" className="w-full -mt-8 object-contain h-[67.18vh]" />
         </div>
-        <img src={'/bg_rb.svg'} alt="bg right bottom" className="w-[12.1875rem] absolute bottom-0 right-0" />
-        <img src={'/bg_lb.svg'} alt="bg left bottom" className="w-[22.9375rem] absolute bottom-0 left-0" />
+        <img src={'/bg_rb.svg'} alt="bg right bottom" className="w-[12.1875rem] max-h-[32.94vh] object-contain object-right-bottom  absolute bottom-0 right-0" />
+        <img src={'/bg_lb.svg'} alt="bg left bottom" className="w-[22.9375rem] max-h-[46.92vh] object-contain object-left-bottom  absolute bottom-0 left-0" />
         <div className="absolute left-0 w-full px-5 gap-2.5 text-sm flex flex-col bottom-[2.125rem]">
             <div className="p-2.5 rounded-lg bg-[#374F3F]/95 text-center whitespace-break-spaces">
                 All-in-one Liquidity Solution for<br />
@@ -69,9 +59,9 @@ function FrameLanuch({ finished }: { finished?: boolean }) {
                         <div className="mt-auto btn-primary" onClick={async () => {
                             const tgApp = getTgApp()
                             if (tgApp && tgApp.initData) {
-                                tgApp.openLink(encodeURI(`https://x.com/intent/follow?original_referer=zoofi.io&ref_src=twsrc^tfw|twcamp^buttonembed|twterm^follow|twgr^ZooFinanceIO&screen_name=ZooFinanceIO`))
+                                tgApp.openLink(encodeURI(followXLink))
                                 await reportCheck(tgApp.initData, 'followX').catch(console.error)
-                                await useTgUser.getState().fetchTgUser()
+                                await reFetchTGUser()
                             }
                         }}>
                             <TwitterX className="text-[2rem]" />
@@ -103,7 +93,7 @@ function FrameLanuch({ finished }: { finished?: boolean }) {
                 <div className=" btn-second" onClick={() => {
                     const tgApp = getTgApp()
                     if (tgApp && tgApp.initData) {
-                        tgApp.openTelegramLink('https://t.me/ZooLnt')
+                        tgApp.openTelegramLink(TGChannelLink)
                     }
                 }}>Go</div>
                 <div className="mt-2.5 btn-primary" onClick={() => !isPendingReportCheckJoin && reportCheckJoin(toggleOpen)}>{isPendingReportCheckJoin && <FaSpinner className="animate-spin text-base" />} Check</div>
@@ -163,15 +153,47 @@ function AboutLNT() {
 
 }
 
+
+function Earn() {
+    const tgApp = getTgApp()
+    const tguser = useTGUser()
+    let points = 0;
+    keys(tguser?.profile || {}).forEach(key => {
+        get(tguser?.profile, key) && (points += 10)
+    })
+    return <div className="w-full h-full relative overflow-hidden flex flex-col items-center px-5 py-[2.125rem] gap-2.5">
+        <img src={'/bg_t.svg'} alt="top bg" className="w-full absolute top-0 left-0" />
+        <div className="flex flex-col w-full gap-2.5 mt-[6rem] items-center relative shrink-0">
+            <div className=" w-full flex items-center gap-2 whitespace-nowrap border-b border-white/50 pb-2.5 mb-2.5">
+                <img src={tgApp?.initDataUnsafe?.user?.photo_url} className={cn(" rounded-full w-10 aspect-square", { 'opacity-0': !tgApp?.initDataUnsafe?.user?.photo_url })} />
+                <div className="text-lg font-semibold">{tgApp?.initDataUnsafe?.user?.username}</div>
+                <div className="flex flex-col items-center ml-auto">
+                    <div className="font-medium text-xs">My Points</div>
+                    <div className="font-semibold text-xl">{Math.round(points)}</div>
+                </div>
+            </div>
+            <div className="w-full text-[.9375rem] leading-3 font-medium">Tasks</div>
+        </div>
+        <div className="flex-1 w-full overflow-y-auto gap-2.5 flex flex-col mt-2.5">
+            <TaskFollowX />
+            <TaskJoinTGChannel />
+            <TaskJoinTGGroup />
+            <TaskConnectTon />
+            <TaskConnectEvm />
+        </div>
+        <div className="w-full gap-2.5 shrink-0">
+            <Menus />
+        </div>
+    </div>
+}
 export function Home() {
     const menu = useMenusStore(useShallow(s => s.current))
-    const tguser = useTgUser(useShallow(s => s.tguser))
-    useEffectOnce(() => { setTimeout(useTgUser.getState().fetchTgUser, 500) })
-    const finished = Boolean(tguser) && Boolean(tguser?.profile?.followX) && Boolean(tguser?.profile?.joinTgChannel)
+    useEffectOnce(() => { setTimeout(reFetchTGUser, 500) })
     return (
         <Fragment>
-            {menu.txt == "Home" && <FrameLanuch finished={finished} />}
+            {menu.txt == "Home" && <FrameLanuch />}
             {menu.txt == "About LNT" && <AboutLNT />}
+            {menu.txt == "Earn" && <Earn />}
         </Fragment>
     );
 }
