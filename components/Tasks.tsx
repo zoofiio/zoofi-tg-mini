@@ -109,6 +109,7 @@ export function TaskConnectEvm() {
     }
     useEffect(() => {
         if (refDoConnectEvm.current && isConnected && address) {
+            
             reportCheck(getTgApp().initData, 'connectEvmAccount', { account: address })
                 .then(reFetchTGUser)
         }

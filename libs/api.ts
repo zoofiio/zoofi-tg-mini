@@ -35,14 +35,14 @@ async function getData<T>(res: Response) {
   }
   return res.json().then((data) => (data as RES<T>).data);
 }
-export function getTgUser(userId: number) {
-  return fetch(`${BASE_URL}/api/tguser/${userId}`).then(getData<TGUser | undefined>);
+export async function getTgUser(userId: number) {
+  return await fetch(`${BASE_URL}/api/tguser/${userId}`).then(getData<TGUser | undefined>);
 }
 
-export function reportCheck(auth: string, taskId: TaskID, body?: { account?: string }) {
-  return fetch(`${BASE_URL}/api/report/${taskId}/check`, {
-    method: "post",
-    headers: { authorization: auth },
+export async function reportCheck(auth: string, taskId: TaskID, body?: { account?: string }) {
+  return await fetch(`${BASE_URL}/api/report/${taskId}/check`, {
+    method: "POST",
+    headers: { authorization: auth, Accept: "application/json", "Content-Type": "application/json" },
     body: body ? JSON.stringify(body) : undefined,
   }).then(getData<void>);
 }
