@@ -1,5 +1,5 @@
 import { reportCheck, TaskID } from "@/libs/api";
-import { followXLink, TGChannelLink, TGGroupLink } from "@/libs/env";
+import { followXLink, isLocal, TGChannelLink, TGGroupLink } from "@/libs/env";
 import { cn, getTgApp } from "@/libs/utils";
 import { useEffect, useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
@@ -36,9 +36,9 @@ function TaskItem({ task }: { task: TaskUI }) {
             task.onClick(clicked)
             setClicked(true)
         }}>
-            {task.checking && <FaSpinner className="text-base" />}
+            {task.checking && <FaSpinner className="shrink-0" />}
             {task.finished ? 'Done' : task.needCheck && clicked ? 'Check' : task.btn}
-            {task.finished && <Correct className="text-sm text-white" />}
+            {task.finished && <Correct className="text-sm text-white shrink-0" />}
         </div>
     </div>
 }
@@ -50,7 +50,7 @@ export function TaskFollowX() {
         tgApp?.openLink(encodeURI(followXLink))
         setTimeout(() => reportCheck(tgApp.initData, 'followX').then(reFetchTGUser), 1000)
     }
-    return <TaskItem task={{ id: 'followX', icon: TwitterX, name: 'Follow our official account', finished: Boolean(tguser?.profile?.followX), btn: 'Link', onClick: onClickLinkX }} />
+    return <TaskItem task={{ id: 'followX', icon: TwitterX, name: 'Follow our official account', finished: Boolean(tguser?.profile?.followX) || isLocal, btn: 'Link', onClick: onClickLinkX }} />
 }
 
 export function TaskJoinTGChannel() {

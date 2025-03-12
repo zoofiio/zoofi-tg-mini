@@ -42,7 +42,7 @@ export function Correct(p: { className?: string }) {
         </g>
         <defs>
             <clipPath id="clip0_5244_3914">
-                <rect width="14" height="14" fill="currentColor" />
+                <rect width="14" height="14" fill="white" />
             </clipPath>
         </defs>
     </svg>
