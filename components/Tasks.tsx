@@ -66,7 +66,7 @@ export function TaskJoinTGChannel() {
             joinCheckTgChannel()
         }
     }
-    return <TaskItem task={{ id: 'joinTgChannel', icon: Telegram, name: 'Join our Telegram channel', finished: Boolean(tguser?.profile?.joinTgChannel), btn: 'Join', onClick: onClickJoinTgChannel, needCheck: true, loading: isCheckingTgChannel }} />
+    return <TaskItem task={{ id: 'joinTgChannel', icon: Telegram, name: 'Follow our telegram channel', finished: Boolean(tguser?.profile?.joinTgChannel), btn: 'Follow', onClick: onClickJoinTgChannel, needCheck: true, loading: isCheckingTgChannel }} />
 
 }
 export function TaskJoinTGGroup() {
@@ -82,7 +82,7 @@ export function TaskJoinTGGroup() {
             joinCheckTgGroup()
         }
     }
-    return <TaskItem task={{ id: 'joinTgChat', icon: Telegram, name: 'Follow our Telegram group', finished: Boolean(tguser?.profile?.joinTgChat), btn: 'Join', onClick: onClickJoinTgGroup, needCheck: true, loading: isCheckingTgGroup }} />
+    return <TaskItem task={{ id: 'joinTgChat', icon: Telegram, name: 'Join our telegram group', finished: Boolean(tguser?.profile?.joinTgChat), btn: 'Join', onClick: onClickJoinTgGroup, needCheck: true, loading: isCheckingTgGroup }} />
 }
 export function TaskConnectTon() {
     const tguser = useTGUser()
