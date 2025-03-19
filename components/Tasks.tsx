@@ -1,15 +1,14 @@
 import { reportCheck, TaskID } from "@/libs/api";
 import { followXLink, isLocal, TGChannelLink, TGGroupLink } from "@/libs/env";
 import { cn, getTgApp } from "@/libs/utils";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useMutation } from "@tanstack/react-query";
+import { toUserFriendlyAddress, useTonConnectUI } from "@tonconnect/ui-react";
 import { useEffect, useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
+import { useAccount, useDisconnect } from "wagmi";
 import { reFetchTGUser, useTGUser } from "./hooks/useTguser";
 import { Correct, Telegram, TwitterX, Wallet } from "./imgs/social";
-import { useMutation } from "@tanstack/react-query";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useAccount, useDisconnect } from "wagmi";
-import { toUserFriendlyAddress, useTonConnectUI } from "@tonconnect/ui-react";
-import { useToggle } from "react-use";
 
 export type TaskUI = {
     id: TaskID
@@ -53,6 +52,21 @@ export function TaskFollowX() {
     }
     return <TaskItem task={{ id: 'followX', icon: TwitterX, name: 'Follow our official account', finished: Boolean(tguser?.profile?.followX) || isLocal, btn: 'Link', onClick: onClickLinkX }} />
 }
+export function TaskShare() {
+    const tguser = useTGUser()
+    const onClick = () => {
+        const tgApp = getTgApp()
+        const user = tgApp?.initDataUnsafe?.user
+        if(!user) return
+        const inviteText = `🔥 Join with me to earn extra ZooLNT airdrops and NFTs!`
+        const link = `https://t.me/ZooFinanceBot?start=${user.username}`
+        console.info('link:',link)
+        const shareLink = `https://t.me/share/url?url=${encodeURI(link)}&text=${encodeURIComponent(inviteText)}`
+        tgApp.openTelegramLink(encodeURI(shareLink))
+        setTimeout(() => reportCheck(tgApp.initData, 'shareBot').then(reFetchTGUser), 1000)
+    }
+    return <TaskItem task={{ id: 'shareBot', icon: TwitterX, name: 'Share', finished: Boolean(tguser?.profile?.shareBot) || isLocal, btn: 'Share', onClick: onClick }} />
+}
 
 export function TaskJoinTGChannel() {
     const tguser = useTGUser()
@@ -66,7 +80,7 @@ export function TaskJoinTGChannel() {
             joinCheckTgChannel()
         }
     }
-    return <TaskItem task={{ id: 'joinTgChannel', icon: Telegram, name: 'Follow our telegram channel', finished: Boolean(tguser?.profile?.joinTgChannel), btn: 'Follow', onClick: onClickJoinTgChannel, needCheck: true, loading: isCheckingTgChannel }} />
+    return <TaskItem task={{ id: 'joinTgChannel', icon: Telegram, name: 'Subscribe our telegram channel', finished: Boolean(tguser?.profile?.joinTgChannel), btn: 'Subscribe', onClick: onClickJoinTgChannel, needCheck: true, loading: isCheckingTgChannel }} />
 
 }
 export function TaskJoinTGGroup() {

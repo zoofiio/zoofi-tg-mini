@@ -23,6 +23,7 @@ export type TGUser = {
     lookUrl5?: boolean;
     lookUrl6?: boolean;
     inviteFriend?: number;
+    shareBot?: boolean;
   };
 };
 

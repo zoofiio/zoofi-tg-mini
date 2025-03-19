@@ -15,7 +15,7 @@ import { get, keys } from "lodash";
 import { reFetchTGUser, useTGUser } from "./hooks/useTguser";
 import { Menus, useMenusStore } from "./Menus";
 import Modal from "./Modal";
-import { TaskConnectEvm, TaskConnectTon, TaskFollowX, TaskJoinTGChannel, TaskJoinTGGroup } from "./Tasks";
+import { TaskConnectEvm, TaskConnectTon, TaskFollowX, TaskJoinTGChannel, TaskJoinTGGroup, TaskShare } from "./Tasks";
 
 function FrameLanuch() {
     const tguser = useTGUser()
@@ -175,6 +175,7 @@ function Earn() {
             <div className="w-full text-[.9375rem] leading-3 font-medium">Tasks</div>
         </div>
         <div className="flex-1 w-full overflow-y-auto gap-2.5 flex flex-col mt-2.5">
+            <TaskShare />
             <TaskFollowX />
             <TaskJoinTGChannel />
             <TaskJoinTGGroup />
