@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { useAccount, useDisconnect } from "wagmi";
 import { reFetchTGUser, useTGUser } from "./hooks/useTguser";
-import { Correct, Telegram, TwitterX, Wallet } from "./imgs/social";
+import { Correct, LinkC, Telegram, TwitterX, Wallet } from "./imgs/social";
 
 export type TaskUI = {
     id: TaskID
@@ -59,13 +59,13 @@ export function TaskShare() {
         const user = tgApp?.initDataUnsafe?.user
         if(!user) return
         const inviteText = `🔥 Join with me to earn extra ZooLNT airdrops and NFTs!`
-        const link = `https://t.me/ZooFinanceBot?start=${user.username}`
+        const link = `https://t.me/ZooFinanceBot?start=${user.username}22`
         console.info('link:',link)
         const shareLink = `https://t.me/share/url?url=${encodeURI(link)}&text=${encodeURIComponent(inviteText)}`
         tgApp.openTelegramLink(encodeURI(shareLink))
         setTimeout(() => reportCheck(tgApp.initData, 'shareBot').then(reFetchTGUser), 1000)
     }
-    return <TaskItem task={{ id: 'shareBot', icon: TwitterX, name: 'Share', finished: Boolean(tguser?.profile?.shareBot) || isLocal, btn: 'Share', onClick: onClick }} />
+    return <TaskItem task={{ id: 'shareBot', icon: LinkC, name: 'Share', finished: Boolean(tguser?.profile?.shareBot), btn: 'Share', onClick: onClick }} />
 }
 
 export function TaskJoinTGChannel() {

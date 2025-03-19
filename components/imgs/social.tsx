@@ -10,6 +10,16 @@ export function TwitterX(p: { className?: string }) {
     </svg>
 
 }
+export function LinkC(p: { className?: string }) {
+    return <svg className={p.className} stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="8" r="7.87" stroke="currentColor" strokeWidth="0.26" fill="none"/>
+        <g transform="scale(0.5)" transform-origin="center center">
+            <path d="M1.5 1H6v1H2v12h12v-4h1v4.5l-.5.5h-13l-.5-.5v-13l.5-.5z"></path>
+            <path d="M15 1.5V8h-1V2.707L7.243 9.465l-.707-.708L13.293 2H8V1h6.5l.5.5z"></path>
+        </g>
+    </svg>
+
+}
 
 export function Telegram(p: { className?: string }) {
     return <svg className={p.className} width="1em" height="1em" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
