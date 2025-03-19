@@ -59,7 +59,7 @@ export function TaskShare() {
         const user = tgApp?.initDataUnsafe?.user
         if(!user) return
         const inviteText = `🔥 Join with me to earn extra ZooLNT airdrops and NFTs!`
-        const link = `https://t.me/ZooFinanceBot?start=${user.username}22`
+        const link = `https://t.me/ZooFinanceBot`
         console.info('link:',link)
         const shareLink = `https://t.me/share/url?url=${encodeURI(link)}&text=${encodeURIComponent(inviteText)}`
         tgApp.openTelegramLink(encodeURI(shareLink))
