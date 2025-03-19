@@ -62,7 +62,7 @@ export function TaskShare() {
         const link = `https://t.me/ZooFinanceBot`
         console.info('link:',link)
         const shareLink = `https://t.me/share/url?url=${encodeURI(link)}&text=${encodeURIComponent(inviteText)}`
-        tgApp.openTelegramLink(encodeURI(shareLink))
+        tgApp.openTelegramLink(shareLink)
         setTimeout(() => reportCheck(tgApp.initData, 'shareBot').then(reFetchTGUser), 1000)
     }
     return <TaskItem task={{ id: 'shareBot', icon: LinkC, name: 'Share', finished: Boolean(tguser?.profile?.shareBot), btn: 'Share', onClick: onClick }} />
